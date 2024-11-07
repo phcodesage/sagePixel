@@ -23,9 +23,12 @@
       "permissions": [
         "WRITE_EXTERNAL_STORAGE",
         "READ_EXTERNAL_STORAGE",
-        "SET_WALLPAPER"
+        "SET_WALLPAPER",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ],
-      "package": "com.yourcompany.wallpaperapp"
+      "package": "com.yourname.sagepixelwallpaper"
     },
     "web": {
       "bundler": "metro",
@@ -48,6 +51,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "88bd4b8a-ebdc-4a48-825e-ddb848439691"
+      }
     }
   }
 }

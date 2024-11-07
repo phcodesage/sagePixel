@@ -13,6 +13,7 @@ import { useLocalSearchParams, Stack } from 'expo-router';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import PulseLoader from '../components/PulseLoader';
 
@@ -43,6 +44,15 @@ export default function ImageDetail() {
     try {
       setDownloading(true);
       
+      // Show notification for download start
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Download Started',
+          body: 'Your wallpaper is downloading...',
+        },
+        trigger: null,
+      });
+
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission needed', 'Please grant permission to save images');
@@ -57,6 +67,15 @@ export default function ImageDetail() {
 
       await MediaLibrary.saveToLibraryAsync(result.uri);
       
+      // Show notification for download completion
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Download Complete',
+          body: 'Your wallpaper has been saved to the gallery.',
+        },
+        trigger: null,
+      });
+
       Alert.alert(
         'Success', 
         Platform.OS === 'android' 

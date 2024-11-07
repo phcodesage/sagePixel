@@ -26,12 +26,15 @@ export default function Home() {
   const [images, setImages] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
 
-  const loadImages = async (query = '') => {
+  const loadImages = async (query = '', page = 1) => {
     setLoading(true);
     try {
-      const photos = await fetchAllPhotos(query);
-      setImages(photos);
+      const { photos, totalResults } = await fetchAllPhotos(query, page);
+      setImages(page === 1 ? photos : [...images, ...photos]);
+      setTotalResults(totalResults);
     } catch (error) {
       console.error('Error loading images:', error);
       setImages([]);
@@ -46,7 +49,16 @@ export default function Home() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    loadImages(query);
+    setPage(1);
+    loadImages(query, 1);
+  };
+
+  const handleLoadMore = () => {
+    if (images.length < totalResults) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadImages(searchQuery, nextPage);
+    }
   };
 
   const renderItem = ({ item }: { item: Photo }) => (
@@ -99,9 +111,10 @@ export default function Home() {
             </TouchableOpacity>
           ))}
         </ScrollView>
+        <Text style={styles.resultsText}>{totalResults} results found</Text>
       </View>
 
-      {loading ? (
+      {loading && page === 1 ? (
         <SkeletonLoader />
       ) : images.length === 0 ? (
         <View style={styles.noResultsContainer}>
@@ -114,6 +127,8 @@ export default function Home() {
           keyExtractor={(item) => `${item.source}-${item.id}`}
           numColumns={2}
           contentContainerStyle={styles.imageGrid}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
         />
       )}
     </View>
@@ -149,6 +164,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontFamily: 'Inter-Medium',
+  },
+  resultsText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    marginTop: 10,
   },
   loader: {
     flex: 1,

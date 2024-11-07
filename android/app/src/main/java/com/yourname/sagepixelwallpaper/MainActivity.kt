@@ -1,4 +1,4 @@
-package com.yourcompany.wallpaperapp
+package com.yourname.sagepixelwallpaper
 
 import android.os.Build
 import android.os.Bundle
