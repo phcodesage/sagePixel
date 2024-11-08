@@ -5,16 +5,20 @@ export interface Photo {
   src: {
     original: string;
     medium: string;
+    small: string;
   };
   source: 'pexels' | 'unsplash';
   title?: string;
+  blur_hash?: string;
 }
 
 async function fetchPexelsPhotos(query = '', page = 1): Promise<{ photos: Photo[], totalResults: number }> {
   try {
     const endpoint = query 
-      ? `https://api.pexels.com/v1/search?query=${query}&per_page=40&page=${page}`
-      : `https://api.pexels.com/v1/curated?per_page=40&page=${page}`;
+      ? `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=20&page=${page}`
+      : `https://api.pexels.com/v1/curated?per_page=20&page=${page}`;
+
+    console.log('Fetching from endpoint:', endpoint);
 
     const response = await fetch(endpoint, {
       headers: {
@@ -22,10 +26,20 @@ async function fetchPexelsPhotos(query = '', page = 1): Promise<{ photos: Photo[
       }
     });
 
+    if (!response.ok) {
+      console.error('API Error:', response.status, await response.text());
+      throw new Error(`API returned ${response.status}`);
+    }
+
     const data = await response.json();
     
+    console.log('API Response:', {
+      total_results: data.total_results,
+      photos_count: data.photos?.length
+    });
+
     if (!data.photos || !Array.isArray(data.photos)) {
-      console.log('Pexels API response:', data);
+      console.error('Invalid API response format:', data);
       return { photos: [], totalResults: 0 };
     }
 
@@ -33,16 +47,20 @@ async function fetchPexelsPhotos(query = '', page = 1): Promise<{ photos: Photo[
       id: photo.id,
       src: {
         original: photo.src.original,
-        medium: photo.src.medium
+        medium: photo.src.medium,
+        small: photo.src.small
       },
       source: 'pexels' as const,
       title: photo.alt || 'Pexels Wallpaper'
     }));
 
-    return { photos, totalResults: data.total_results };
+    return { 
+      photos, 
+      totalResults: data.total_results || 0 
+    };
   } catch (error) {
     console.error('Error fetching from Pexels:', error);
-    return { photos: [], totalResults: 0 };
+    throw error;
   }
 }
 

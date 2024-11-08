@@ -54,3 +54,8 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+
+# Keystore files
+*.keystore
+*.jks
+android/keystore.properties

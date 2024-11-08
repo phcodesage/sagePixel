@@ -2,9 +2,12 @@ import { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const SKELETON_COUNT = 8;
 
-export default function SkeletonLoader() {
+interface SkeletonLoaderProps {
+  count?: number;
+}
+
+export default function SkeletonLoader({ count = 8 }: SkeletonLoaderProps) {
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function SkeletonLoader() {
 
   const renderSkeletonItems = () => {
     const items = [];
-    for (let i = 0; i < SKELETON_COUNT; i++) {
+    for (let i = 0; i < count; i++) {
       items.push(
         <Animated.View
           key={i}

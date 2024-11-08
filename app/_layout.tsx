@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Image } from 'expo-image';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,9 +38,13 @@ export default function RootLayout() {
             contentStyle: {
               backgroundColor: '#1a1a1a',
             },
+            title: 'SagePixel',
           }}
         />
       </View>
     </GestureHandlerRootView>
   );
 }
+
+Image.defaultCachePolicy = 'memory-disk';
+Image.defaultMemoryCacheMaxCount = 50;
