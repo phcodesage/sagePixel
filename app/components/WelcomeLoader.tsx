@@ -46,14 +46,14 @@ export default function WelcomeLoader({ imagesLoaded, totalImages, onLoadingComp
         const nextProgress = Math.min(prev + 1, 100);
         
         // If we reach 100% and images are loaded, mark as complete
-        if (nextProgress >= 100) {
+        if (nextProgress >= 100 && imagesLoaded && totalImages > 0) {
           clearInterval(progressInterval);
           clearInterval(textInterval);
           setCanComplete(true);
         }
         
-        // If images aren't loaded yet, stay at 95%
-        if (nextProgress >= 95 && (!imagesLoaded || totalImages === 0)) {
+        // If images aren't loaded yet but progress reaches 95%, stay at 95%
+        if (!imagesLoaded && nextProgress >= 95) {
           return 95;
         }
         
@@ -65,7 +65,7 @@ export default function WelcomeLoader({ imagesLoaded, totalImages, onLoadingComp
       clearInterval(progressInterval);
       clearInterval(textInterval);
     };
-  }, []);
+  }, [imagesLoaded, totalImages]);
 
   const width = progressAnim.interpolate({
     inputRange: [0, 100],

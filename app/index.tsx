@@ -160,7 +160,7 @@ export default function Home() {
       <StatusBar style="light" />
       {!welcomeComplete ? (
         <WelcomeLoader 
-          imagesLoaded={!loading}
+          imagesLoaded={!loading && images.length > 0}
           totalImages={images.length}
           onLoadingComplete={() => setWelcomeComplete(true)}
         />
